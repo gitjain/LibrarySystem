@@ -25,23 +25,23 @@ namespace UserInfoApp.Controllers
 
             // Construct the query operation for all user entities.
             TableQuery<UserEntity> query = new TableQuery<UserEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "userInfo"));
-            String getUser = "{";
+            
+            String getUser = "";
             Boolean firstIteration = true;
+
             // Print the fields for each user.
             foreach (UserEntity entity in table.ExecuteQuery(query))
-            { 
+            {
                 if (firstIteration==false)
                 {
-                    getUser += ", username:" + entity.RowKey;
+                    getUser += ", " + entity.RowKey;
                 }
                 else
                 {
-                    getUser += "username:" + entity.RowKey;
+                    getUser += entity.RowKey;
                 }
                 firstIteration = false;
             }
-
-            getUser += "}";
 
             return Ok(getUser);
         }
