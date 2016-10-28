@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
+using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 
-/*namespace UserInfoApp.Models
+
+public class UserEntity : TableEntity
 {
-    public class UserInfo
+    public UserEntity(string partitionName, string userName)
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Category { get; set; }
-        public decimal Price { get; set; }
+
+        this.PartitionKey = partitionName;
+        this.RowKey = userName;
     }
-}*/
+
+    public UserEntity() { }
+
+    public string firstName { get; set; }
+    public string lastName { get; set; }
+
+}

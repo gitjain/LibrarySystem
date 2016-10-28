@@ -11,20 +11,40 @@ namespace UserInfoApp.Controllers
 {
     public class UserInfoController : ApiController
     {
-        /*public IEnumerable<UserInfo> GetAllProducts()
+        public IHttpActionResult GetUserInfo()
         {
-            return userInfo;
-        }
+            // Retrieve the storage account from the connection string.
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                WebConfigurationManager.AppSettings.Get("StorageConnectionString"));
 
-        public IHttpActionResult GetProduct(int id)
-        {
-            var product = userInfo.FirstOrDefault((p) => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
+            // Create the table client.
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+            // Create the CloudTable object that represents the "userInfo" table.
+            CloudTable table = tableClient.GetTableReference("userInfo");
+
+            // Construct the query operation for all user entities.
+            TableQuery<UserEntity> query = new TableQuery<UserEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "userInfo"));
+            String getUser = "{";
+            Boolean firstIteration = true;
+            // Print the fields for each user.
+            foreach (UserEntity entity in table.ExecuteQuery(query))
+            { 
+                if (firstIteration==false)
+                {
+                    getUser += ", username:" + entity.RowKey;
+                }
+                else
+                {
+                    getUser += "username:" + entity.RowKey;
+                }
+                firstIteration = false;
             }
-            return Ok(product);
-        }*/
+
+            getUser += "}";
+
+            return Ok(getUser);
+        }
 
         public IHttpActionResult PutUserInfo(string userName, string firstName, string lastName)
         {
@@ -35,7 +55,7 @@ namespace UserInfoApp.Controllers
             // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
-            // Create the CloudTable object that represents the "people" table.
+            // Create the CloudTable object that represents the "userInfo" table.
             CloudTable table = tableClient.GetTableReference("userInfo");
 
             // Create a new user entity.
