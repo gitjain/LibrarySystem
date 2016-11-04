@@ -9,9 +9,9 @@
         <h2>User Information</h2>
         <h3>Please enter Username</h3>
         <input type="text" id="userName" size="5" />
-        <h3>Please enter Email firstName</h3>
+        <h3>Please enter First Name</h3>
         <input type="text" id="firstName" size="5" />
-        <h3>Please enter Email lastName</h3>
+        <h3>Please enter Last Name</h3>
         <input type="text" id="lastName" size="5" />
         <input type="button" value="Submit" onclick="add();" />
     </div>
@@ -20,6 +20,20 @@
         <h2>Get all Usernames section</h2>
         <input type="button" value="Get All Users" onclick="getAllUsers();" />
         <div id="userInfo"></div>
+    </div>
+
+    <div>
+        <h2 style="text-align:center">LIBRARY SYSTEM</h2>
+        <div>
+            <h3>Please enter User Name</h3>
+            <input type="text" id="user_name" />
+            <input type="button" value="Submit" onclick="" />
+        </div>
+
+        <div id="bookDetails" hidden="hidden">
+            <h3>List of books</h3>
+            <ul id="bookList"></ul>         
+        </div>
     </div>
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
