@@ -19,7 +19,9 @@
     <div>
         <h2>Get all Usernames section</h2>
         <input type="button" value="Get All Users" onclick="getAllUsers();" />
-        <div id="userInfo"></div>
+        <div id="temp">
+            <ul id="userInfo"></ul>
+        </div>
     </div>
 
     <div>
@@ -27,7 +29,7 @@
         <div>
             <h3>Please enter User Name</h3>
             <input type="text" id="user_name" />
-            <input type="button" value="Submit" onclick="" />
+            <input type="button" value="Submit" onclick="getBooks();" />
         </div>
 
         <div id="bookDetails" hidden="hidden">
@@ -38,32 +40,49 @@
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script>
-    var uri = 'api/userInfo';
+        var uri = 'api/userInfo';
+        var uri1 = 'api/booksLibrary';
    
-    function getAllUsers() {
+        function getAllUsers() {
      
-      $.getJSON(uri + '/')
-          .done(function (data) {
-             $('#userInfo').text("All Usernames: " + data);
-           })
-          .fail(function (jqXHR, textStatus, err) {
-            $('#userInfo').text('Error: ' + err);
-          });
-    }
+          $.getJSON(uri + '/')
+              .done(function (data) {
+                  $.each(data, function (key, item) {
+                      $('<li>', { text: item}).appendTo('#userInfo');
+                  });
+              })
+              .fail(function (jqXHR, textStatus, err) {
+                $('#userInfo').text('Error: ' + err);
+              });
+        }
 
-    function add() {
-        var userName = $('#userName').val();
-        var firstName = $('#firstName').val();
-        var lastName = $('#lastName').val();
-        var uri_put = 'api/userInfo/?userName=' + userName + '&firstName=' + firstName + '&lastName=' + lastName;
-        $.ajax({
-            url: uri_put,
-            type: 'PUT',
-            success: function (result) {
+        function add() {
+            var userName = $('#userName').val();
+            var firstName = $('#firstName').val();
+            var lastName = $('#lastName').val();
+            var uri_put = 'api/userInfo/?userName=' + userName + '&firstName=' + firstName + '&lastName=' + lastName;
+            $.ajax({
+                url: uri_put,
+                type: 'PUT',
+                success: function (result) {
 
-            }
-        });
-    }
+                }
+            });
+        }
+
+        function getBooks() {
+            $.getJSON(uri1 + '/')
+                .done(function (data) {
+                    $.each(data, function (key, item) {
+                        $('<li>', { text: item }).appendTo("#bookList");
+                    });
+                    $('#bookDetails').show();
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#userInfo').text('Error: ' + err);
+                });
+           
+        }
 
     </script>
 </body>

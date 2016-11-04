@@ -74,5 +74,7 @@ namespace UserInfoApp.Controllers
             }
             return Ok("User Info added successfully");
         }
+
+        
     }
 }
