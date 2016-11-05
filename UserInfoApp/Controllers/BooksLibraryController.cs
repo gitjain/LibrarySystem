@@ -28,14 +28,31 @@ namespace UserInfoApp.Controllers
             // Construct the query operation for all user entities.
             TableQuery<BookEntity> query = new TableQuery<BookEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "LibrarySystem"));
 
-            List<String> book_list = new List<string>();
-            
+            string getBookList = "[{";
+            Boolean firstIteration = true;
+
             foreach (BookEntity entity in table.ExecuteQuery(query))
             {
-                book_list.Add(entity.RowKey + " " + entity.Availability);
+                if (firstIteration == false)
+                {
+                    getBookList += ", {\"bookname\" :"  + "\""  + entity.RowKey + "\", " 
+                        + "\"availability\" :" + "\"" + entity.Availability + "\""
+                        + "}";
+                }
+                else
+                {
+                    getBookList += "\"bookname\" : " + "\"" + entity.RowKey + "\", "
+                        + "\"availability\" :" + "\"" + entity.Availability + "\""
+                        + "}";
+                }
+                firstIteration = false;
             }
 
-            return Ok(book_list);
+            getBookList += "]";
+
+            JsonResult temp = new JsonResult();
+            temp.Data = getBookList;
+            return Ok(temp);
         }
     }
 }

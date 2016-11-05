@@ -10,9 +10,11 @@
         <h3>Please enter Username</h3>
         <input type="text" id="userName" size="5" />
         <h3>Please enter First Name</h3>
-        <input type="text" id="firstName" size="5" />
+        <input id="firstName" size="5" name="name" value="" required pattern="[A-Za-z]+\s[A-Za-z]+" title="firstname">
+        <!--<input type="text" id="firstName" size="5" />-->
         <h3>Please enter Last Name</h3>
-        <input type="text" id="lastName" size="5" />
+       <input id="lastName" size="5" name="name" value="" required pattern="[A-Za-z]+\s[A-Za-z]+" title="lastname">
+        <!--<input type="text" id="lastName" size="5" />-->
         <input type="button" value="Submit" onclick="add();" />
     </div>
     
@@ -34,7 +36,14 @@
 
         <div id="bookDetails" hidden="hidden">
             <h3>List of books</h3>
-            <ul id="bookList"></ul>         
+            <table id="bookTable">
+                <tr>
+                    <th>Book Name</th>
+                    <th>Availability</th>
+                    
+                </tr>
+                
+            </table>         
         </div>
     </div>
 
@@ -71,11 +80,23 @@
         }
 
         function getBooks() {
+            
             $.getJSON(uri1 + '/')
                 .done(function (data) {
+
                     $.each(data, function (key, item) {
-                        $('<li>', { text: item }).appendTo("#bookList");
+                        if (key == "Data") {
+                            item = JSON.parse(item);
+                            $.each(item, function (key1, item1) {
+                                var row = $("<tr>");
+                                row.append($("<td>").text(item1.bookname));
+                                row.append($("<td>").text(item1.availability));
+                                row.append($("<button class='check'>").text('CheckOut'));
+                                $("#bookTable").append(row);
+                            });
+                        }
                     });
+                   
                     $('#bookDetails').show();
                 })
                 .fail(function (jqXHR, textStatus, err) {
