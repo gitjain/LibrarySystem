@@ -5,18 +5,18 @@
 </head>
 <body>
 
-   <div>
+   <form action="demo_form.asp">
         <h2>User Information</h2>
         <h3>Please enter Username</h3>
-        <input type="text" id="userName" size="5" />
+        <input type="text" id="userName" size="5" disabled="disabled" />
         <h3>Please enter First Name</h3>
-        <input id="firstName" size="5" name="name" value="" required pattern="[A-Za-z]+\s[A-Za-z]+" title="firstname">
-        <!--<input type="text" id="firstName" size="5" />-->
+        <!--<input id="firstName" size="5" name="name" value="" required pattern="[A-Za-z]" title="firstname">-->
+        <input type="text" id="firstName" size="5"  disabled="disabled" />
         <h3>Please enter Last Name</h3>
-       <input id="lastName" size="5" name="name" value="" required pattern="[A-Za-z]+\s[A-Za-z]+" title="lastname">
-        <!--<input type="text" id="lastName" size="5" />-->
+        <!--<input id="lastName" size="5" name="name" value="" required pattern="[A-Za-z]{3}" title="lastname">-->
+        <input type="text" id="lastName" size="5"  disabled="disabled" />
         <input type="button" value="Submit" onclick="add();" />
-    </div>
+    </form>
     
     <div>
         <h2>Get all Usernames section</h2>
@@ -29,21 +29,16 @@
     <div>
         <h2 style="text-align:center">LIBRARY SYSTEM</h2>
         <div>
-            <h3>Please enter User Name</h3>
+            <h3>Please enter User Name: UserA or UserB</h3>
             <input type="text" id="user_name" />
-            <input type="button" value="Submit" onclick="getBooks();" />
+            <input type="button" value="Submit" onclick="onSubmit();" />
+            <div id="libraryUserName" hidden><h3></h3></div>
+            <div id="libraryUser"><h3></h3></div>
         </div>
 
         <div id="bookDetails" hidden="hidden">
             <h3>List of books</h3>
-            <table id="bookTable">
-                <tr>
-                    <th>Book Name</th>
-                    <th>Availability</th>
-                    
-                </tr>
-                
-            </table>         
+            <table id="bookTable" style="text-align:center"></table>         
         </div>
     </div>
 
@@ -79,30 +74,98 @@
             });
         }
 
-        function getBooks() {
-            
-            $.getJSON(uri1 + '/')
-                .done(function (data) {
+        function onSubmit() {
+            clearAll();
+            getUsersAndBooks();
+        }
 
-                    $.each(data, function (key, item) {
-                        if (key == "Data") {
-                            item = JSON.parse(item);
-                            $.each(item, function (key1, item1) {
-                                var row = $("<tr>");
-                                row.append($("<td>").text(item1.bookname));
-                                row.append($("<td>").text(item1.availability));
-                                row.append($("<button class='check'>").text('CheckOut'));
-                                $("#bookTable").append(row);
-                            });
-                        }
-                    });
-                   
-                    $('#bookDetails').show();
-                })
-                .fail(function (jqXHR, textStatus, err) {
-                    $('#userInfo').text('Error: ' + err);
-                });
-           
+        function clearAll() {
+            $('#user_name').text('');
+            $('#bookDetails').hide();
+            $('#bookTable').empty();
+        }
+
+        function getUsersAndBooks() {
+            var name = $('#user_name').val().toLowerCase();
+            var msg = "The user does not exist.";
+            $("#libraryUserName").text(name);
+            
+            $.getJSON(uri + '/' + name)
+             .done(function (data) {
+                 $('#libraryUser').text(data);
+                 if (data != msg) {
+                     getBooks();
+                 }
+             })
+             .fail(function (jqXHR, textStatus, err) {
+                 $('#libraryUser').text('Error: ' + err);
+             });
+        }
+
+        function getBooks() {
+            $.getJSON(uri1 + '/')
+               .done(function (data) {
+
+                   $.each(data, function (key, item) {
+                       if (key == "Data") {
+                           
+                           var header_row = $('<tr>');
+                           header_row.append($("<th>").text("Book Name"));
+                           header_row.append($("<th>").text("Availability"));
+                           $('#bookTable').append(header_row);
+
+                           var temp;
+                           item = JSON.parse(item);
+                           $.each(item, function (key1, item1) {
+                               var row = $("<tr>");
+                               row.append($("<td class='bookname'>").text(item1.bookname));
+                               row.append($("<td class='availability'>").text(item1.availability));
+                               temp = item1.availability;
+                               if (temp == "No") {
+                                   row.append($("<button class='check' disabled='disabled'>").text('CheckOut'));
+                               } else {
+                                   row.append($("<button class='check'>").text('CheckOut'));
+                               }
+
+                               $("#bookTable").append(row);
+                           });
+                       }
+                   });
+
+                   $('#bookDetails').show();
+
+               })
+               .fail(function (jqXHR, textStatus, err) {
+                   $('#userInfo').text('Error: ' + err);
+               });
+        }
+        
+        $("#bookTable").on('click', 'tr', function () {
+            $(this).children(".check").attr('disabled', 'disabled');
+            $(this).children(".availability").text("No");
+            var value = $(this).children(".bookname").text();
+            userCheckOutBook(value);
+        });
+
+        function userCheckOutBook(val) {
+            var name = $('#libraryUserName').text();
+            //var uri_put = 'api/userInfo/?userName=' + name + '&bookName=' + val;
+            //$.ajax({
+            //    url: uri_put,
+            //    type: 'PUT',
+            //    success: function (result) {
+
+            //    }
+            //});
+
+            var uri_put1 = 'api/booksLibrary/?userName=' + name + '&bookName=' + val;
+            $.ajax({
+                url: uri_put1,
+                type: 'PUT',
+                success: function (result) {
+
+                }
+            });
         }
 
     </script>
