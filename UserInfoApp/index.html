@@ -149,15 +149,6 @@
 
         function userCheckOutBook(val) {
             var name = $('#libraryUserName').text();
-            //var uri_put = 'api/userInfo/?userName=' + name + '&bookName=' + val;
-            //$.ajax({
-            //    url: uri_put,
-            //    type: 'PUT',
-            //    success: function (result) {
-
-            //    }
-            //});
-
             var uri_put1 = 'api/booksLibrary/?userName=' + name + '&bookName=' + val;
             $.ajax({
                 url: uri_put1,

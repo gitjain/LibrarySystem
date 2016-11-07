@@ -75,44 +75,6 @@ namespace UserInfoApp.Controllers
             return Ok("User Info added successfully");
         }
 
-        //public IHttpActionResult PutUserLibraryInfo(string userName, string bookName)
-        //{
-        //    // Retrieve the storage account from the connection string.
-        //    CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-        //       WebConfigurationManager.AppSettings.Get("StorageConnectionString"));
-
-        //    // Create the table client.
-        //    CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-        //    // Create the CloudTable object that represents the "userInfo" table.
-        //    CloudTable table = tableClient.GetTableReference("userInfo");
-
-        //    // Create a retrieve operation that takes a customer entity.
-        //    TableOperation retrieveOperation = TableOperation.Retrieve<UserEntity>("userInfo", userName);
-
-        //    // Execute the operation.
-        //    TableResult retrievedResult = table.Execute(retrieveOperation);
-
-        //    // Assign the result to a UserEntity object.
-        //    UserEntity updateEntity = (UserEntity)retrievedResult.Result;
-        //    if (updateEntity != null)
-        //    {
-        //        // Update book name.
-        //        updateEntity.bookName = bookName;
-
-        //        // Create the Replace TableOperation.
-        //        TableOperation updateOperation = TableOperation.Replace(updateEntity);
-
-        //        // Execute the operation.
-        //        table.Execute(updateOperation);
-
-        //       return Ok("Entity updated.");
-        //    }
-
-        //    else
-        //        return Ok("Entity could not be retrieved.");
-        //}
-
         public IHttpActionResult GetLibraryUser(string name)
         {
             // Retrieve the storage account from the connection string.
