@@ -28,7 +28,7 @@
 
     <div>
         <h2 style="text-align:center">LIBRARY SYSTEM</h2>
-        <div>
+        <div id="library_system">
             <h3>Please enter User Name: UserA or UserB</h3>
             <input type="text" id="user_name" />
             <input type="button" value="Submit" onclick="onSubmit();" />
@@ -38,7 +38,8 @@
 
         <div id="bookDetails" hidden="hidden">
             <h3>List of books</h3>
-            <table id="bookTable" style="text-align:center"></table>         
+            <table id="bookTable" style="text-align:center"></table>   
+            <table id="checkInTable" style="text-align:center"></table>      
         </div>
     </div>
 
@@ -79,36 +80,50 @@
             getUsersAndBooks();
         }
 
+        function onSubmitCheckIn() {
+            clearAll();
+            var name = $('#user_name').val().toLowerCase();
+            getCheckinInfo(name);
+        }
+
         function clearAll() {
+            $('#empty').text('');
             $('#user_name').text('');
             $('#bookDetails').hide();
             $('#bookTable').empty();
+            $('#checkInTable').empty();
+            $('#checkingIn').remove();
+           
         }
 
         function getUsersAndBooks() {
             var name = $('#user_name').val().toLowerCase();
-            var msg = "The user does not exist.";
-            $("#libraryUserName").text(name);
-            
-            $.getJSON(uri + '/' + name)
-             .done(function (data) {
-                 $('#libraryUser').text(data);
-                 if (data != msg) {
-                     getBooks();
-                 }
-             })
-             .fail(function (jqXHR, textStatus, err) {
-                 $('#libraryUser').text('Error: ' + err);
-             });
+            if (name == "") {
+                $("#library_system").append("<div id='empty'>Please enter a UserName</h3>");
+            } else {
+                var msg = "The user does not exist.";
+                $("#libraryUserName").text(name);
+
+                $.getJSON(uri + '/' + name)
+                 .done(function (data) {
+                     $('#libraryUser').text(data);
+                     if (data != msg) {
+                         getBooks();
+                     }
+                 })
+                 .fail(function (jqXHR, textStatus, err) {
+                     $('#libraryUser').text('Error: ' + err);
+                 });
+            }
         }
 
         function getBooks() {
+            
+            $("#library_system").append("<input type='button' value='CheckInBooks' id='checkingIn' onclick='onSubmitCheckIn();' />");
             $.getJSON(uri1 + '/')
                .done(function (data) {
-
                    $.each(data, function (key, item) {
                        if (key == "Data") {
-                           
                            var header_row = $('<tr>');
                            header_row.append($("<th>").text("Book Name"));
                            header_row.append($("<th>").text("Availability"));
@@ -159,6 +174,54 @@
             });
         }
 
+        function getCheckinInfo(val) {
+            $.getJSON(uri1 + '/' + val)
+                .done(function (data) {
+                $.each(data, function (key, item) {
+                if (key == "Data") {
+                    var header_row = $('<tr>');
+                    header_row.append($("<th>").text("Book Name"));
+                    header_row.append($("<th>").text("Availability"));
+                    $('#checkInTable').append(header_row);
+
+                    var temp;
+                    item = JSON.parse(item);
+                    $.each(item, function (key1, item1) {
+                        var row = $("<tr>");
+                        row.append($("<td class='bookname'>").text(item1.bookname));
+                        row.append($("<td class='availability'>").text(item1.availability));
+                        temp = item1.availability;
+                        row.append($("<button class='checkIn'>").text('CheckIn'));
+                       
+                        $("#checkInTable").append(row);
+                    });
+                }
+                });
+                $('#bookDetails').show();
+                 })
+                 .fail(function (jqXHR, textStatus, err) {
+                     $('#checkInTable').text('Error: ' + err);
+                 });
+        }
+
+        $("#checkInTable").on('click', 'tr', function () {
+            $(this).children(".checkIn").attr('disabled', 'disabled');
+            $(this).children(".availability").text("Yes");
+            var value = $(this).children(".bookname").text();
+            userCheckInBook(value);
+        });
+
+        function userCheckInBook(val) {
+            var name = $('#libraryUserName').text();
+            var uri_put1 = 'api/booksLibrary/?bookName=' + val;
+            $.ajax({
+                url: uri_put1,
+                type: 'PUT',
+                success: function (result) {
+
+                }
+            });
+        }
     </script>
 </body>
 </html>
